@@ -181,13 +181,17 @@ class PluginExportPdf extends PluginExportHtml {
         }
 
         if (!isset($pdfrun) || $pdfrun == 'first' || $pdfrun == 'all') {
-            $browsertype = 'chromium-browser';
-            system($command . ' | grep ' . $browsertype, $error);
-            if ($error) {
-                $browsertype = 'chrome';
-                system($command . ' | grep ' . $browsertype, $error2);
-                if ($error2) {
-                    throw new MaharaException('Need to have a Chrome browser installed to use the headless pdf option');
+            if (array_key_exists('CHROME_PATH', $_SERVER)) {
+                $browsertype = $_SERVER['CHROME_PATH'];
+            } else {
+                $browsertype = 'chromium-browser';
+                system($command . ' | grep ' . $browsertype, $error);
+                if ($error) {
+                    $browsertype = 'chrome';
+                    system($command . ' | grep ' . $browsertype, $error2);
+                    if ($error2) {
+                        throw new MaharaException('Need to have a Chrome browser installed to use the headless pdf option');
+                    }
                 }
             }
 
